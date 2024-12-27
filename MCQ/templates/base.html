@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUESTION GENERATOR</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'dashboard.css' %}">
+    <style>
+        /* Full height for html and body */
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        /* Container to take full screen height */
+        .container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center; /* Center content horizontally */
+            padding: 20px;
+        }
+
+        /* Grid for the questions, take full width and have wrapping */
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            width: 100%;
+            justify-content: center; /* Center the grid */
+        }
+
+        .g-col-4 {
+            flex: 1;
+            max-width: calc(33.33% - 1rem);
+            box-sizing: border-box;
+            min-width: 250px; /* Minimum width to prevent too small columns */
+        }
+
+        /* Center the form within the page */
+        .form-container {
+            width: 100%;
+            max-width: 800px; /* Limit the form width */
+        }
+
+        /* Styling for the question boxes */
+        .question-box {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            
+        }
+
+        .question-box p {
+            font-size: 1.1rem;
+            font-weight: normal;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <h2 class="mb-4 text-center text-primary" style="font-family: 'Arial', sans-serif; text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);">
+                <span style="font-size: 3rem; font-weight: bold;">QUESTION GENERATOR</span>
+                <p class="mt-2" style="font-size: 1.2rem; color: #6c757d; font-style: italic;">
+                    <sup>Powered by <span style="font-weight: bold; color: #007bff;">Ambika Secondary School</span></sup>
+                </p>
+            </h2>
+            
+            <form id="dynamicForm" action="" method="post">
+                <div id="formFields">
+                    {% csrf_token %}
+                    <!-- Textarea for input will be added here -->
+                </div>
+                <button type="button" class="btn btn-primary mt-3" id="addInput">Generate MCQ</button>
+            </form>
+        </div>
+        <!-- Questions will be displayed here dynamically in grid layout -->
+        <div class="grid mt-5">
+            {% if questions %}
+            <h3 class="mb-4 text-center text-primary" style="font-family: 'Arial', sans-serif; text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);">
+                <span style="font-size: 2rem; font-weight: bold;">SOLVE BY YOURSELF</span>
+                <p class="mt-2" style="font-size: 1.2rem; color: #6c757d; font-style: italic;">
+                     <span style="font-weight: bold; color: #007bff;">Generated MCQ</span>
+                </p>
+            </h3>
+                {% for question in questions %}
+                    <div class="g-col-4">
+                        <div class="question-box p-3 border rounded m-2">
+                            <p>{{ question.question|linebreaks }}</p>
+                            <div>
+                                <input type="radio" name="q{{ question.id }}" value="A"> A<br>
+                                <input type="radio" name="q{{ question.id }}" value="B"> B<br>
+                                <input type="radio" name="q{{ question.id }}" value="C"> C<br>
+                                <input type="radio" name="q{{ question.id }}" value="D"> D<br>
+                            </div>
+                            <button type="button" class="btn btn-success mt-2 check-answer" data-question-id="{{ question.id }}">Check Answer</button>
+                            <p class="answer mt-2" id="answer-{{ question.id }}" style="display: none;"></p>
+                        </div>
+                    </div>
+                     <!-- Section to display score -->
+                {% endfor %}
+            {% elif error_message %}
+                <div class="error-message">
+                    {{ error_message }}
+                </div>
+            {% endif %}
+        </div>
+        <!-- Section to display score with fancy animation -->
+     <div id="scoreDisplay" class="mt-3 text-center" style="font-size: 1.0rem; font-weight: bold;"></div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'script.js' %}"></script>
+</body>
+</html>
